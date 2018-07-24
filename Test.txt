@@ -1,0 +1,116 @@
+        public static int MaxDifference(int[] arr)
+        {
+            //不符合限制条件的返回-2（自定义的）
+            if (arr==null)
+            {
+                return -2;
+            }
+            if (arr.Length < 1 || arr.Length > 200000 || arr[0] > 1000000 || arr[0] < -1000000)
+            {
+                return -2;
+            }
+            int min_value = arr[0];
+            int max_dis = 0;
+            for (int i = 1; i < arr.Length; ++i)
+            {
+                if (arr[i] > 1000000 || arr[i] < -1000000)
+                {
+                    return -2;
+                }
+                if (max_dis < arr[i] - min_value)
+                {
+                    max_dis = arr[i] - min_value;
+                }
+                if (min_value > arr[i])
+                {
+                    min_value = arr[i];
+                }
+            }
+            if (max_dis == 0)
+            {
+                return -1;
+            }
+            return max_dis;
+        }
+        public static string[] CheckIPs(string[] ips)
+        {
+            if (ips==null)
+            {
+                return null;
+            }
+            var checkResultList = new string[ips.Count()];
+                for (int i = 0; i < ips.Count(); i++)
+                {
+                    if (ips[i].Contains(":"))
+                    {
+                        var ip6Partlist = ips[i].Split(':').ToList();
+                        if (ip6Partlist.Count != 6 && ip6Partlist.Count != 8 
+                        || ips[i].Substring(ips[i].Length - 1, 1) == ":" || ips[i].Substring(0, 1) == ":"
+                        ||string.IsNullOrWhiteSpace(ips[i].Substring(ips[i].Length - 1, 1))
+                        || string.IsNullOrWhiteSpace(ips[i].Substring(0, 1)))
+                        {
+                            checkResultList[i] = "Neither";
+                            continue;
+                        }
+                        if (ip6Partlist.Count == 6 && !ips[i].Contains("::"))
+                        {
+                            checkResultList[i] = "Neither";
+                            continue;
+                        }
+                        foreach (var ipPart in ip6Partlist)
+                        {
+                            foreach (var a in ipPart)
+                            {
+                                if (!(a >= '0' && a <= '9') && !(a >= 'a' && a <= 'f') && !(a >= 'A' && a <= 'F'))
+                                {
+                                    checkResultList[i] = "Neither";
+                                    break;
+                                }
+                            }
+                            if (checkResultList[i] == "Neither")
+                            {
+                                break;
+                            }
+                        }
+                        if (checkResultList[i] != "Neither")
+                        {
+                            checkResultList[i] = "IPv6";
+                        }
+                    }
+                    else
+                    {
+                        var ip4Partlist = ips[i].Split('.').ToList();
+                        if (ip4Partlist.Count != 4 || ips[i].Substring(ips[i].Length - 1, 1) == ".")
+                        {
+                            checkResultList[i] = "Neither";
+                            continue;
+                        }
+                        foreach (var ipPart in ip4Partlist)
+                        {
+                            if (string.IsNullOrEmpty(ipPart) || ipPart.Length > 3 || (ipPart.Length > 1 && ipPart.Substring(0, 1) == "0"))
+                            {
+                                checkResultList[i] = "Neither";
+                                continue;
+                            }
+                            foreach (var a in ipPart)
+                            {
+                                if (a < '0' || a > '9')
+                                {
+                                    checkResultList[i] = "Neither";
+                                }
+                            }
+                            if (Convert.ToInt32(ipPart) < 0 && Convert.ToInt32(ipPart) > 255)
+                            {
+                                checkResultList[i] = "Neither";
+                            }
+                        }
+                        if (checkResultList[i] != "Neither")
+                        {
+                            checkResultList[i] = "IPv4";
+                        }
+                    }
+
+                }
+
+                return checkResultList;
+        }
